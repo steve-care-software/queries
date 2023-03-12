@@ -1,13 +1,14 @@
 package domain
 
 import (
+	grammars "github.com/steve-care-software/grammars/domain"
 	"github.com/steve-care-software/libs/cryptography/hash"
 )
 
-// NewBuilder creates a new builder
-func NewBuilder() Builder {
+// NewQueryBuilder creates a new query builder
+func NewQueryBuilder() QueryBuilder {
 	hashAdapter := hash.NewAdapter()
-	return createBuilder(hashAdapter)
+	return createQueryBuilder(hashAdapter)
 }
 
 // NewElementBuilder creates a new element builder
@@ -16,11 +17,26 @@ func NewElementBuilder() ElementBuilder {
 	return createElementBuilder(hashAdapter)
 }
 
-// Builder represents a query builder
+// Builder represents queries builder
 type Builder interface {
 	Create() Builder
-	WithToken(token hash.Hash) Builder
-	WithElement(element Element) Builder
+	WithGrammar(grammar grammars.Grammar) Builder
+	WithQueries(queries []Query) Builder
+	Now() (Queries, error)
+}
+
+// Queries represents queries
+type Queries interface {
+	Hash() hash.Hash
+	Grammar() grammars.Grammar
+	Queries() []Query
+}
+
+// QueryBuilder represents a query builder
+type QueryBuilder interface {
+	Create() QueryBuilder
+	WithToken(token hash.Hash) QueryBuilder
+	WithElement(element Element) QueryBuilder
 	Now() (Query, error)
 }
 
